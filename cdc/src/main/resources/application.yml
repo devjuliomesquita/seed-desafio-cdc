@@ -1,0 +1,58 @@
+spring:
+  application:
+    name: cdc
+
+  datasource:
+    url: jdbc:postgresql://${postgres.url}/${postgres.db}?currentSchema=${postgres.schema_default}
+    username: ${postgres.username}
+    password: ${postgres.password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      auto-commit: false
+      connection-timeout: 250
+      max-lifetime: 600000
+      maximum-pool-size: 20
+      maximum-idle: 10
+      pool-name: master
+
+  mongodb:
+    uri: mongodb://${mongodb.username}:${mongodb.password}@${mongodb.url}/${mongodb.db}?authSource=admin
+
+  autoconfigure:
+    exclude:
+      - org.springframework.modulith.events.mongodb.MongoDbEventPublicationAutoConfiguration
+      - org.springframework.modulith.events.mongodb.MongoDbTransactionAutoConfiguration
+
+  jpa:
+    show-sql: true
+    open-in-view: false
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate.generate_statistics: false
+      hibernate.connection.provider_disables_autocommit: true
+      hibernate.globally_quoted_identifiers: true
+
+  flyway:
+    baseline-on-migrate: true
+    enabled: true
+    baseline-description: "init"
+    baseline-version: 0
+    locations: classpath:db/migration/system,classpath:db/migration/audit
+    schemas: ${postgres.schema_default},${postgres.schema_audit}
+    url: jdbc:postgresql://${postgres.url}/${postgres.db}?currentSchema=${postgres.schema_default}
+    user: ${postgres.username}
+    password: ${postgres.password}
+
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+  compression:
+    enabled: true
+    min-response-size: 1024
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+  undertow:
+    threads:
+      worker: 64
+      io: 4
