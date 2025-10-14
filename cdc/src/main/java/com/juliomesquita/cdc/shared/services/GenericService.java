@@ -46,11 +46,7 @@ public abstract class GenericService<
     }
 
     public Pagination<RESP> findAll(final SearchQuery searchQuery) {
-        final PageRequest pageRequest = PageRequest.of(
-            searchQuery.currentPage(),
-            searchQuery.itemsPerPage(),
-            Sort.by(Sort.Direction.fromString(searchQuery.direction()), searchQuery.sort())
-        );
+        final PageRequest pageRequest = searchQuery.toPageRequest();
 
         final Specification<E> specification = Optional.ofNullable(searchQuery.terms())
             .filter(str -> !str.isBlank())
