@@ -5,6 +5,7 @@ import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
 import com.juliomesquita.cdc.shared.services.GenericService;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +26,7 @@ public abstract class GenericController<
 
     @Override
     @PostMapping
-    public ResponseEntity<RESP> create(@RequestBody REQ request) {
+    public ResponseEntity<RESP> create(@Valid @RequestBody REQ request) {
         return ResponseEntity.status(201).body(service.create(request));
     }
 
@@ -45,7 +46,7 @@ public abstract class GenericController<
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<RESP> update(@PathVariable UUID id, @RequestBody REQ request) {
+    public ResponseEntity<RESP> update(@PathVariable UUID id, @Valid @RequestBody REQ request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 

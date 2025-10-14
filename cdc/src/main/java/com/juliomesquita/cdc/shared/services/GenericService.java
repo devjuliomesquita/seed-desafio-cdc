@@ -5,7 +5,7 @@ import com.juliomesquita.cdc.shared.exceptions.ResourceNotFoundException;
 import com.juliomesquita.cdc.shared.repositories.GenericRepository;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -32,7 +32,7 @@ public abstract class GenericService<
         this.mapper = mapper;
     }
 
-    @Transactional
+    @Transactional("jpaTransactionManager")
     public RESP create(final REQ request) {
         E entity = mapper.toEntity(request);
         E savedEntity = repository.save(entity);
@@ -70,7 +70,7 @@ public abstract class GenericService<
         );
     }
 
-    @Transactional
+    @Transactional("jpaTransactionManager")
     public RESP update(final UUID id, final REQ request) {
         E entity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
@@ -80,7 +80,7 @@ public abstract class GenericService<
         return mapper.toResponse(savedEntity);
     }
 
-    @Transactional
+    @Transactional("jpaTransactionManager")
     public void delete(final UUID id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Resource not found with id: " + id);
