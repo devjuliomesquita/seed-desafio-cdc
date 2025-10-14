@@ -2,6 +2,7 @@ package com.juliomesquita.cdc.livro.application.book.usecases.findpartial;
 
 import com.juliomesquita.cdc.livro.domain.entities.Book;
 import com.juliomesquita.cdc.livro.domain.repositories.BookRepository;
+import com.juliomesquita.cdc.shared.repositories.SpecificationUtils;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import org.springframework.data.domain.Page;
@@ -10,9 +11,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
-import java.util.Optional;
 
-import static com.juliomesquita.cdc.shared.repositories.SpecificationUtils.like;
 
 @Component
 public class FindPartialUseCaseImpl extends FindPartialUseCase {
@@ -25,14 +24,7 @@ public class FindPartialUseCaseImpl extends FindPartialUseCase {
     @Override
     public Pagination<BookPartialResponse> execute(final SearchQuery searchQuery) {
         final PageRequest pageRequest = searchQuery.toPageRequest();
-        final Specification<Book> specification = Optional.ofNullable(searchQuery.terms())
-            .filter(str -> !str.isBlank())
-            .map(str -> {
-                final Specification<Book> nameLike = like("name", str);
-                final Specification<Book> descriptionLike = like("description", str);
-                return nameLike.or(descriptionLike);
-            })
-            .orElse(null);
+        final Specification<Book> specification = SpecificationUtils.build(searchQuery);
 
         final Page<Book> pageable = this.bookRepository.findAll(specification, pageRequest);
         return Pagination.create(

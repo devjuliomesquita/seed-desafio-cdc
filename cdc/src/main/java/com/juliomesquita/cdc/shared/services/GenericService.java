@@ -3,18 +3,16 @@ package com.juliomesquita.cdc.shared.services;
 import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
 import com.juliomesquita.cdc.shared.exceptions.ResourceNotFoundException;
 import com.juliomesquita.cdc.shared.repositories.GenericRepository;
+import com.juliomesquita.cdc.shared.repositories.SpecificationUtils;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
-import org.springframework.transaction.annotation.Transactional;
+import com.juliomesquita.cdc.shared.utils.SearchQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.UUID;
-
-import static com.juliomesquita.cdc.shared.repositories.SpecificationUtils.like;
 
 public abstract class GenericService<
     E extends BaseEntityWithGeneratedId,
@@ -48,14 +46,7 @@ public abstract class GenericService<
     public Pagination<RESP> findAll(final SearchQuery searchQuery) {
         final PageRequest pageRequest = searchQuery.toPageRequest();
 
-        final Specification<E> specification = Optional.ofNullable(searchQuery.terms())
-            .filter(str -> !str.isBlank())
-            .map(str -> {
-                final Specification<E> nameLike = like("name", str);
-                final Specification<E> descriptionLike = like("description", str);
-                return nameLike.or(descriptionLike);
-            })
-            .orElse(null);
+        final Specification<E> specification = SpecificationUtils.build(searchQuery);
 
         final Page<E> pageable = this.repository.findAll(specification, pageRequest);
         return Pagination.create(
