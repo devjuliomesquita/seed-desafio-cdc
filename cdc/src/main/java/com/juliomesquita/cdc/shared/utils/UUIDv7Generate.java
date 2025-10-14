@@ -1,9 +1,12 @@
-package com.juliomesquita.cdc.shared.entities.internal;
+package com.juliomesquita.cdc.shared.utils;
+
+import org.springframework.modulith.NamedInterface;
 
 import java.security.SecureRandom;
 import java.time.Instant;
 import java.util.UUID;
 
+@NamedInterface
 public final class UUIDv7Generate {
     private UUIDv7Generate() {
     }

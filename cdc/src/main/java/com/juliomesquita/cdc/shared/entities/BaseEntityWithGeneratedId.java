@@ -3,6 +3,7 @@ package com.juliomesquita.cdc.shared.entities;
 import jakarta.persistence.*;
 import org.springframework.modulith.NamedInterface;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.OffsetDateTime;
 import java.util.Objects;
@@ -11,10 +12,12 @@ import java.util.UUID;
 @NamedInterface
 @MappedSuperclass
 public abstract class BaseEntityWithGeneratedId implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 1L;
 
     @Id
-    @GeneratedValue(generator = "com.juliomesquita.cdc.shared.entities.internal.UUIDv7Generate")
+    @GeneratedValue(generator = "com.juliomesquita.cdc.shared.utils.UUIDv7Generate")
     @Column(name = "id", unique = true, nullable = false)
     protected UUID id;
 
