@@ -1,4 +1,4 @@
 @org.springframework.modulith.ApplicationModule(
-    allowedDependencies = {"shared", "shared :: entities", "shared::uuidgenerate", "shared :: utils"}
+    allowedDependencies = {"shared :: shared", "shared :: entities"}
 )
 package com.juliomesquita.cdc.livro;

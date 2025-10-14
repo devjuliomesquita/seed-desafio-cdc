@@ -1,12 +1,12 @@
 package com.juliomesquita.cdc.shared.services;
 
 import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
+import com.juliomesquita.cdc.shared.exceptions.NotFoundException;
 import com.juliomesquita.cdc.shared.repositories.GenericRepository;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -16,11 +16,11 @@ import java.util.UUID;
 import static com.juliomesquita.cdc.shared.repositories.SpecificationUtils.like;
 
 public abstract class GenericService<
-        E extends BaseEntityWithGeneratedId,
-        REQ,
-        RESP,
-        R extends GenericRepository<E>,
-        M extends GenericMapper<E, REQ, RESP>
+    E extends BaseEntityWithGeneratedId,
+    REQ,
+    RESP,
+    R extends GenericRepository<E>,
+    M extends GenericMapper<E, REQ, RESP>
     > {
 
     protected final R repository;
@@ -39,7 +39,7 @@ public abstract class GenericService<
 
     public RESP findById(final UUID id) {
         E entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entity not found with id: " + id));
+            .orElseThrow(() -> new NotFoundException("Entity not found with id: " + id));
         return mapper.toResponse(entity);
     }
 
@@ -70,15 +70,15 @@ public abstract class GenericService<
 
     public RESP update(final UUID id, final REQ request) {
         E entity = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Entity not found with id: " + id));
-        mapper.updateEntityFromRequest(request, entity);
-        E savedEntity = repository.save(entity);
+            .orElseThrow(() -> new NotFoundException("Entity not found with id: " + id));
+
+        E savedEntity = repository.save(this.mapper.updateEntityFromRequest(request, entity));
         return mapper.toResponse(savedEntity);
     }
 
     public void delete(final UUID id) {
         if (!repository.existsById(id)) {
-            throw new RuntimeException("Entity not found with id: " + id);
+            throw new NotFoundException("Entity not found with id: " + id);
         }
         repository.deleteById(id);
     }
