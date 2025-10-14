@@ -8,17 +8,17 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 
 public record AuthorRequest(
-    @NotBlank(message = "O nome não pode estar em branco.")
-    @Size(min = 2, max = 255, message = "O nome deve ter entre 2 e 255 caracteres.")
+    @NotBlank(message = "{validation.not.blank}")
+    @Size(min = 2, max = 255, message = "{validation.size}")
     String name,
 
-    @NotBlank(message = "O email não pode estar em branco.")
-    @Email(message = "O formato do email é inválido.")
-    @UniqueValue(domainClass = Author.class, fieldName = "email", message = "Este email já está em uso.")
+    @NotBlank(message = "{validation.not.blank}")
+    @Email(message = "{validation.invalid.email}")
+    @UniqueValue(domainClass = Author.class, fieldName = "email", message = "{validation.unique.value}")
     String email,
 
-    @NotBlank(message = "A descrição não pode estar em branco.")
-    @Size(max = 400, message = "A descrição não pode exceder 400 caracteres.")
+    @NotBlank(message = "{validation.not.blank}")
+    @Size(max = 400, message = "{validation.size.max}")
     String description
 ) {
 }
