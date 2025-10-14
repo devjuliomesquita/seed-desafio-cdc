@@ -6,8 +6,10 @@ import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
@@ -26,7 +28,13 @@ public interface GenericDoc<REQ, RESP> {
     @Operation(summary = "List all resources with pagination and search", operationId = "findAll", description = "This endpoint receives the necessary parameters for find an list of the resources.")
     @ApiResponse(responseCode = "200", description = "Resources listed successfully")
     @DefaultPublicAPIResponses
-    ResponseEntity<Pagination<RESP>> findAll(SearchQuery searchQuery);
+    ResponseEntity<Pagination<RESP>> findAll(
+        @RequestParam(value = "page") @DefaultValue("1") int page,
+        @RequestParam(value = "size") @DefaultValue("10") int size,
+        @RequestParam("terms") String terms,
+        @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
+        @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction
+    );
 
     @Operation(summary = "Update an existing resource by its ID", operationId = "update", description = "This endpoint receives the necessary parameters for updating a resource.")
     @ApiResponse(responseCode = "200", description = "Resource updated successfully")

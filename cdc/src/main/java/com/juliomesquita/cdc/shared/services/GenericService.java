@@ -5,6 +5,7 @@ import com.juliomesquita.cdc.shared.exceptions.NotFoundException;
 import com.juliomesquita.cdc.shared.repositories.GenericRepository;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -31,6 +32,7 @@ public abstract class GenericService<
         this.mapper = mapper;
     }
 
+    @Transactional
     public RESP create(final REQ request) {
         E entity = mapper.toEntity(request);
         E savedEntity = repository.save(entity);
@@ -68,6 +70,7 @@ public abstract class GenericService<
         );
     }
 
+    @Transactional
     public RESP update(final UUID id, final REQ request) {
         E entity = repository.findById(id)
             .orElseThrow(() -> new NotFoundException("Entity not found with id: " + id));
@@ -76,6 +79,7 @@ public abstract class GenericService<
         return mapper.toResponse(savedEntity);
     }
 
+    @Transactional
     public void delete(final UUID id) {
         if (!repository.existsById(id)) {
             throw new NotFoundException("Entity not found with id: " + id);

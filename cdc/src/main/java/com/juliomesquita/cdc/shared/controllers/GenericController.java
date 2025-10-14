@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 public abstract class GenericController<
-        E extends BaseEntityWithGeneratedId,
-        REQ,
-        RESP,
-        S extends GenericService<E, REQ, RESP, ?, ?>>
-    implements GenericDoc<REQ, RESP> { 
+    E extends BaseEntityWithGeneratedId,
+    REQ,
+    RESP,
+    S extends GenericService<E, REQ, RESP, ?, ?>>
+    implements GenericDoc<REQ, RESP> {
 
     protected final S service;
 
@@ -37,7 +37,9 @@ public abstract class GenericController<
 
     @Override
     @GetMapping
-    public ResponseEntity<Pagination<RESP>> findAll(SearchQuery searchQuery) { 
+    public ResponseEntity<Pagination<RESP>> findAll(
+        int currentPage, int itemsPerPage, String terms, String sort, String direction) {
+        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction);
         return ResponseEntity.ok(service.findAll(searchQuery));
     }
 
