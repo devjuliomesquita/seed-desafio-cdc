@@ -1,35 +1,28 @@
 package com.juliomesquita.cdc.livro.domain.entities;
 
+import com.juliomesquita.cdc.livro.domain.valueobjects.BookInfo;
+import com.juliomesquita.cdc.livro.domain.valueobjects.ISBN;
 import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
 import jakarta.persistence.*;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
 
 @Entity
 @Table(name = "books")
 public class Book extends BaseEntityWithGeneratedId {
 
-    @Column(name = "title", nullable = false, unique = true)
-    private String title;
+    @Embedded
+    @AttributeOverrides({
+        @AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, unique = true)),
+        @AttributeOverride(name = "abstractText", column = @Column(name = "abstract_text", length = 500, nullable = false)),
+        @AttributeOverride(name = "summary", column = @Column(name = "summary", columnDefinition = "TEXT")),
+        @AttributeOverride(name = "price", column = @Column(name = "price", nullable = false)),
+        @AttributeOverride(name = "numberOfPages", column = @Column(name = "number_of_pages", nullable = false)),
+        @AttributeOverride(name = "publicationDate", column = @Column(name = "publication_date"))
+    })
+    private BookInfo info;
 
-    @Column(name = "abstract_text", length = 500, nullable = false)
-    private String abstractText;
-
-    @Column(name = "summary", columnDefinition = "TEXT")
-    private String summary;
-
-    @Column(name = "price", nullable = false)
-    private BigDecimal price;
-
-    @Column(name = "number_of_pages", nullable = false)
-    private Integer numberOfPages;
-
-    @Column(name = "isbn", nullable = false, unique = true)
-    private String isbn;
-
-    @Column(name = "publication_date")
-    private LocalDate publicationDate;
+    @Embedded
+    @AttributeOverride(name = "value", column = @Column(name = "isbn", nullable = false, unique = true))
+    private ISBN isbn;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
@@ -38,4 +31,42 @@ public class Book extends BaseEntityWithGeneratedId {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "author_id", nullable = false)
     private Author author;
+
+    public static Book create(final BookInfo info, final ISBN isbn, final Category category, final Author author) {
+        return new Book(info, isbn, category, author);
+    }
+
+    public Book update(final BookInfo info, final ISBN isbn, final Category category, final Author author) {
+        this.info = info;
+        this.isbn = isbn;
+        this.category = category;
+        this.author = author;
+        return this;
+    }
+
+    protected Book() {
+    }
+
+    private Book(final BookInfo info, final ISBN isbn, final Category category, final Author author) {
+        this.info = info;
+        this.isbn = isbn;
+        this.category = category;
+        this.author = author;
+    }
+
+    public BookInfo getInfo() {
+        return info;
+    }
+
+    public ISBN getIsbn() {
+        return isbn;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
 }
