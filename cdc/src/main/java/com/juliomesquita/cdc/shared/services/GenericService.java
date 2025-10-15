@@ -37,12 +37,14 @@ public abstract class GenericService<
         return mapper.toResponse(savedEntity);
     }
 
+    @Transactional(readOnly = true)
     public RESP findById(final UUID id) {
         E entity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
         return mapper.toResponse(entity);
     }
 
+    @Transactional(readOnly = true)
     public Pagination<RESP> findAll(final SearchQuery searchQuery) {
         final PageRequest pageRequest = searchQuery.toPageRequest();
 

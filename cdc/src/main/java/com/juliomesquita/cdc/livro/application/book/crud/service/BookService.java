@@ -67,6 +67,7 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
         return this.mapper.toResponse(bookSaved);
     }
 
+    @Transactional(readOnly = true)
     @Override
     public BookResponse findById(UUID id) {
         Book book = this.repository.findById(id)

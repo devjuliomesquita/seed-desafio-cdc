@@ -1,6 +1,8 @@
 package com.juliomesquita.cdc.shared.configs;
 
 import jakarta.persistence.EntityManagerFactory;
+import org.bson.UuidRepresentation;
+import org.springframework.boot.mongodb.autoconfigure.MongoClientSettingsBuilderCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -21,6 +23,11 @@ public class TransactionManagersConfig {
     @Bean(name = "mongoTransactionManager")
     public PlatformTransactionManager mongoTransactionManager(MongoDatabaseFactory dbFactory) {
         return new MongoTransactionManager(dbFactory);
+    }
+
+    @Bean
+    public MongoClientSettingsBuilderCustomizer uuidRepresentationCustomizer() {
+        return builder -> builder.uuidRepresentation(UuidRepresentation.STANDARD);
     }
 }
 

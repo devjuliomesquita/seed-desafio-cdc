@@ -1,6 +1,5 @@
 package com.juliomesquita.cdc.livro.application.category.crud.dtos;
 
-import com.juliomesquita.cdc.livro.domain.entities.Author;
 import com.juliomesquita.cdc.livro.domain.entities.Category;
 
 import java.time.OffsetDateTime;
