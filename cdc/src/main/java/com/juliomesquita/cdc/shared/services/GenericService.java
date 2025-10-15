@@ -30,7 +30,7 @@ public abstract class GenericService<
         this.mapper = mapper;
     }
 
-    @Transactional("jpaTransactionManager")
+    @Transactional("transactionManager")
     public RESP create(final REQ request) {
         E entity = mapper.toEntity(request);
         E savedEntity = repository.save(entity);
@@ -57,7 +57,7 @@ public abstract class GenericService<
         );
     }
 
-    @Transactional("jpaTransactionManager")
+    @Transactional("transactionManager")
     public RESP update(final UUID id, final REQ request) {
         E entity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
@@ -67,7 +67,7 @@ public abstract class GenericService<
         return mapper.toResponse(savedEntity);
     }
 
-    @Transactional("jpaTransactionManager")
+    @Transactional("transactionManager")
     public void delete(final UUID id) {
         if (!repository.existsById(id)) {
             throw new ResourceNotFoundException("Resource not found with id: " + id);

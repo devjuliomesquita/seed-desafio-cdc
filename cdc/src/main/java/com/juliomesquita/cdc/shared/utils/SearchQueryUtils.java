@@ -1,5 +1,6 @@
 package com.juliomesquita.cdc.shared.utils;
 
+import com.juliomesquita.cdc.shared.repositories.SearchOperation;
 import org.springframework.data.domain.Sort;
 
 import java.util.*;
@@ -24,7 +25,7 @@ public final class SearchQueryUtils {
             return MapParam.create();
         }
         final Map<String, Object> params = new HashMap<>();
-        final Map<String, String> operations = new HashMap<>();
+        final Map<String, SearchOperation> operations = new HashMap<>();
 
         final String[] filters = query.terms().trim().split(",");
 
@@ -50,20 +51,15 @@ public final class SearchQueryUtils {
 
         for (int i = 0; i < parts.length; i++) {
             String val = parts[i];
-            String operator = "cn";
+            SearchOperation operator = SearchOperation.CONTAINS;
 
             if (val.contains("!")) {
                 String[] valOp = val.split("!");
                 val = valOp[0];
-                operator = switch (valOp[1]) {
-                    case "GT" -> ">";
-                    case "GE" -> ">=";
-                    case "LT" -> "<";
-                    case "LE" -> "<=";
-                    case "NE" -> "!=";
-                    case "EQ" -> "=";
-                    default -> operator;
-                };
+                SearchOperation parsedOperator = SearchOperation.getSimpleOperation(valOp[1].toLowerCase());
+                if (parsedOperator != null) {
+                    operator = parsedOperator;
+                }
             }
 
             String paramKey = parts.length > 1 ? key + i : key;
@@ -87,7 +83,7 @@ public final class SearchQueryUtils {
             final boolean notLastElement = i + 1 < entries.size();
             final String previousKey = i > 0 ? entries.get(i - 1).getKey().replaceAll("\\d+$", "") : null;
             final String nextKey = notLastElement ? entries.get(i + 1).getKey().replaceAll("\\d+$", "") : null;
-            final String operation = mapParam.operations().get(key);
+            final SearchOperation operation = mapParam.operations().get(key);
 
             if (notLastElement) {
                 if ((previousKey == null && nextKey.equalsIgnoreCase(keyWithoutIndex)) ||
@@ -96,11 +92,18 @@ public final class SearchQueryUtils {
                 }
             }
 
-            if(operation.equals("cn")) {
-                whereClause.append(String.format("LOWER(%s) like LOWER(CONCAT('%%',:%s,'%%'))", keyWithoutIndex, key));
-            } else {
-                whereClause.append(String.format("%s %s :%s", keyWithoutIndex, operation, key));
+            switch (operation) {
+                case CONTAINS -> whereClause.append(String.format("LOWER(%s) like LOWER(CONCAT('%%',:%s,'%%'))", keyWithoutIndex, key));
+                case EQUAL -> whereClause.append(String.format("%s = :%s", keyWithoutIndex, key));
+                case NOT_EQUAL -> whereClause.append(String.format("%s <> :%s", keyWithoutIndex, key));
+                case GREATER_THAN -> whereClause.append(String.format("%s > :%s", keyWithoutIndex, key));
+                case GREATER_THAN_EQUAL -> whereClause.append(String.format("%s >= :%s", keyWithoutIndex, key));
+                case LESS_THAN -> whereClause.append(String.format("%s < :%s", keyWithoutIndex, key));
+                case LESS_THAN_EQUAL -> whereClause.append(String.format("%s <= :%s", keyWithoutIndex, key));
+                default -> {
+                }
             }
+
 
             if (notLastElement) {
                 if (nextKey.equalsIgnoreCase(keyWithoutIndex)) {

@@ -1,4 +1,6 @@
 package com.juliomesquita.cdc.shared.utils;
 
-public record Param(String key, Object value, String operator) {
+import com.juliomesquita.cdc.shared.repositories.SearchOperation;
+
+public record Param(String key, Object value, SearchOperation operator) {
 }

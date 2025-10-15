@@ -28,7 +28,7 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
         super(repository, mapper);
     }
 
-    @Transactional("jpaTransactionManager")
+    @Transactional("transactionManager")
     @Override
     public BookResponse create(final BookRequest request) {
         final Book book = createInstanceBook(request);
@@ -36,7 +36,7 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
         return this.mapper.toResponse(bookSaved);
     }
 
-    @Transactional("jpaTransactionManager")
+    @Transactional("transactionManager")
     @Override
     public BookResponse update(final UUID id, final BookRequest request) {
         final Book instanceBook = this.createInstanceBook(request);
