@@ -18,6 +18,10 @@ spring:
   mongodb:
     uri: mongodb://${mongodb.username}:${mongodb.password}@${mongodb.url}/${mongodb.db}?authSource=admin
 
+  data:
+    mongodb:
+      auto-index-creation: true
+
   autoconfigure:
     exclude:
       - org.springframework.modulith.events.mongodb.MongoDbEventPublicationAutoConfiguration
@@ -38,7 +42,7 @@ spring:
     enabled: true
     baseline-description: "init"
     baseline-version: 0
-    locations: classpath:db/migration/system,classpath:db/migration/audit
+    locations: classpath:db/migration
     schemas: ${postgres.schema_default},${postgres.schema_audit}
     url: jdbc:postgresql://${postgres.url}/${postgres.db}?currentSchema=${postgres.schema_default}
     user: ${postgres.username}

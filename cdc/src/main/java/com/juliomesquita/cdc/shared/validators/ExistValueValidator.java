@@ -9,8 +9,7 @@ import org.springframework.util.Assert;
 
 import java.util.List;
 
-public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Object> {
-
+public class ExistValueValidator implements ConstraintValidator<ExistValue, Object> {
     private String domainAttribute;
     private Class<?> klass;
 
@@ -18,7 +17,7 @@ public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Ob
     private EntityManager manager;
 
     @Override
-    public void initialize(UniqueValue params) {
+    public void initialize(ExistValue params) {
         domainAttribute = params.fieldName();
         klass = params.domainClass();
     }
@@ -34,6 +33,6 @@ public class UniqueValueValidator implements ConstraintValidator<UniqueValue, Ob
         query.setParameter("value", value);
 
         List<?> list = query.getResultList();
-        return list.isEmpty();
+        return !list.isEmpty();
     }
 }
