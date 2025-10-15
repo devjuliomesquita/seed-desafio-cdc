@@ -10,10 +10,10 @@ import com.juliomesquita.cdc.livro.domain.valueobjects.ISBN;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
-public record BookResponse(UUID id, BookInfo info, ISBN isbn, CategoryResponse category, AuthorResponse author, OffsetDateTime createdAt) {
+public record BookResponse(UUID id, BookInfo info, ISBN isbn, CategoryResponse category, AuthorResponse author, OffsetDateTime createdAt, String summary) {
     public static BookResponse fromResponse(final Book entity) {
         return new BookResponse(entity.getId(), entity.getInfo(), entity.getIsbn(),
             CategoryResponse.fromResponse(entity.getCategory()), AuthorResponse.fromResponse(entity.getAuthor()),
-            entity.getCreatedAt());
+            entity.getCreatedAt(), entity.getSummary());
     }
 }

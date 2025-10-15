@@ -3,11 +3,9 @@ package com.juliomesquita.cdc.livro.application.book.crud.service;
 import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookRequest;
 import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookResponse;
 import com.juliomesquita.cdc.livro.application.book.crud.mapper.BookMapper;
-import com.juliomesquita.cdc.livro.domain.entities.Author;
-import com.juliomesquita.cdc.livro.domain.entities.Book;
-import com.juliomesquita.cdc.livro.domain.entities.Category;
-import com.juliomesquita.cdc.livro.domain.repositories.AuthorRepository;
+import com.juliomesquita.cdc.livro.domain.entities.*;
 import com.juliomesquita.cdc.livro.domain.repositories.BookRepository;
+import com.juliomesquita.cdc.livro.domain.repositories.BookSummaryRepository;
 import com.juliomesquita.cdc.livro.domain.valueobjects.BookInfo;
 import com.juliomesquita.cdc.livro.domain.valueobjects.ISBN;
 import com.juliomesquita.cdc.shared.exceptions.ResourceNotFoundException;
@@ -23,9 +21,11 @@ import java.util.UUID;
 public class BookService extends GenericService<Book, BookRequest, BookResponse, BookRepository, BookMapper> {
     @PersistenceContext
     private EntityManager entityManager;
+    private final BookSummaryRepository bookSummaryRepository;
 
-    public BookService(final BookRepository repository, final BookMapper mapper) {
+    public BookService(final BookRepository repository, final BookMapper mapper, BookSummaryRepository bookSummaryRepository) {
         super(repository, mapper);
+        this.bookSummaryRepository = bookSummaryRepository;
     }
 
     @Transactional("transactionManager")
@@ -33,6 +33,15 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
     public BookResponse create(final BookRequest request) {
         final Book book = createInstanceBook(request);
         final Book bookSaved = this.repository.save(book);
+
+        try {
+            BookSummary summaryDoc = BookSummary.create(bookSaved.getId(), request.summary());
+            this.bookSummaryRepository.save(summaryDoc);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to save book summary to MongoDB", e);
+        }
+
+        bookSaved.setSummary(request.summary());
         return this.mapper.toResponse(bookSaved);
     }
 
@@ -46,13 +55,33 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
             .update(instanceBook.getInfo(), instanceBook.getIsbn(), instanceBook.getCategory(), instanceBook.getAuthor());
 
         final Book bookSaved = this.repository.save(bookRecover);
+
+        try {
+            BookSummary summaryDoc = BookSummary.create(bookSaved.getId(), request.summary());
+            this.bookSummaryRepository.save(summaryDoc);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to update book summary in MongoDB", e);
+        }
+
+        bookSaved.setSummary(request.summary());
         return this.mapper.toResponse(bookSaved);
+    }
+
+    @Override
+    public BookResponse findById(UUID id) {
+        Book book = this.repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
+
+        this.bookSummaryRepository.findById(id)
+                .ifPresent(summary -> book.setSummary(summary.getSummary()));
+
+        return this.mapper.toResponse(book);
     }
 
     private Book createInstanceBook(final BookRequest request) {
         final ISBN isbn = ISBN.of(request.isbn());
         final BookInfo bookInfo = BookInfo.of(
-            request.title(), request.abstractText(), request.summary(), request.price(), request.numberOfPages(), request.publicationDate());
+            request.title(), request.abstractText(), request.price(), request.numberOfPages(), request.publicationDate());
         final Category category = entityManager.getReference(Category.class, request.categoryId());
         final Author author = entityManager.getReference(Author.class, request.authorId());
 

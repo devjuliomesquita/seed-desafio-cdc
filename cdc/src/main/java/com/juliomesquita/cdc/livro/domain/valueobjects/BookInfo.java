@@ -20,9 +20,6 @@ public record BookInfo(
     @NotBlank @Size(max = 500)
     String abstractText,
 
-    @NotNull
-    String summary,
-
     @NotNull @DecimalMin(value = "20.0", inclusive = true)
     BigDecimal price,
 
@@ -40,11 +37,10 @@ public record BookInfo(
     public static BookInfo of(
         final String title,
         final String abstractText,
-        final String summary,
         final BigDecimal price,
         final Integer numberOfPages,
         final LocalDate publicationDate
     ) {
-        return new BookInfo(title, abstractText, summary, price, numberOfPages, publicationDate);
+        return new BookInfo(title, abstractText, price, numberOfPages, publicationDate);
     }
 }

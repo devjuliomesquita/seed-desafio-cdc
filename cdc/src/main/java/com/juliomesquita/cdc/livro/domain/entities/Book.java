@@ -13,12 +13,14 @@ public class Book extends BaseEntityWithGeneratedId {
     @AttributeOverrides({
         @AttributeOverride(name = "title", column = @Column(name = "title", nullable = false, unique = true)),
         @AttributeOverride(name = "abstractText", column = @Column(name = "abstract_text", length = 500, nullable = false)),
-        @AttributeOverride(name = "summary", column = @Column(name = "summary", columnDefinition = "TEXT")),
         @AttributeOverride(name = "price", column = @Column(name = "price", nullable = false)),
         @AttributeOverride(name = "numberOfPages", column = @Column(name = "number_of_pages", nullable = false)),
         @AttributeOverride(name = "publicationDate", column = @Column(name = "publication_date"))
     })
     private BookInfo info;
+
+    @Transient
+    private String summary;
 
     @Embedded
     @AttributeOverride(name = "value", column = @Column(name = "isbn", nullable = false, unique = true))
@@ -68,5 +70,13 @@ public class Book extends BaseEntityWithGeneratedId {
 
     public Author getAuthor() {
         return author;
+    }
+
+    public String getSummary() {
+        return summary;
+    }
+
+    public void setSummary(String summary) {
+        this.summary = summary;
     }
 }
