@@ -50,4 +50,24 @@ public class GlobalExceptionHandler {
         );
         return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
+    @ExceptionHandler(FieldDuplicatedException.class)
+    public ResponseEntity<RestAPIErrorResponse> handleFieldDuplicatedException(FieldDuplicatedException ex) {
+        RestAPIErrorResponse errorResponse = new RestAPIErrorResponse(
+            HttpStatus.BAD_REQUEST.value(),
+            "Field duplication error",
+            Collections.singleton(ex.getMessage())
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InternalApplicationErrorException.class)
+    public ResponseEntity<RestAPIErrorResponse> handleInternalApplicationErrorException(InternalApplicationErrorException ex) {
+        RestAPIErrorResponse errorResponse = new RestAPIErrorResponse(
+            HttpStatus.INTERNAL_SERVER_ERROR.value(),
+            "An internal application error occurred.",
+            Collections.singleton(ex.getMessage())
+        );
+        return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
 }

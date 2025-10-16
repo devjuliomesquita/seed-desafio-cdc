@@ -1,17 +1,23 @@
 package com.juliomesquita.cdc.shared.services;
 
 import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
+import com.juliomesquita.cdc.shared.exceptions.DatabaseErrorFormatter;
+import com.juliomesquita.cdc.shared.exceptions.FieldDuplicatedException;
+import com.juliomesquita.cdc.shared.exceptions.InternalApplicationErrorException;
 import com.juliomesquita.cdc.shared.exceptions.ResourceNotFoundException;
 import com.juliomesquita.cdc.shared.repositories.GenericRepository;
 import com.juliomesquita.cdc.shared.repositories.SpecificationUtils;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+
+import static com.juliomesquita.cdc.shared.exceptions.DatabaseErrorFormatter.*;
 
 public abstract class GenericService<
     E extends BaseEntityWithGeneratedId,
@@ -65,8 +71,15 @@ public abstract class GenericService<
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
 
         mapper.updateEntityFromRequest(request, entity);
-        E savedEntity = repository.save(entity);
-        return mapper.toResponse(savedEntity);
+        try {
+            E savedEntity = repository.save(entity);
+            repository.flush();
+            return mapper.toResponse(savedEntity);
+        } catch (DataIntegrityViolationException ex) {
+            throw new FieldDuplicatedException(extractReadableMessage(ex.getMostSpecificCause().getMessage()));
+        } catch (Exception ex) {
+            throw new InternalApplicationErrorException("An error occurred while updating the resource: " + ex.getMessage());
+        }
     }
 
     @Transactional("transactionManager")
