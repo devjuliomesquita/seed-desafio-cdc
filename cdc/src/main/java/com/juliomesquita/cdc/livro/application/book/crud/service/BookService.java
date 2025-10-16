@@ -1,9 +1,13 @@
 package com.juliomesquita.cdc.livro.application.book.crud.service;
 
-import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookRequest;
+import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookCreateRequest;
 import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookResponse;
+import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookUpdateRequest;
 import com.juliomesquita.cdc.livro.application.book.crud.mapper.BookMapper;
-import com.juliomesquita.cdc.livro.domain.entities.*;
+import com.juliomesquita.cdc.livro.domain.entities.Author;
+import com.juliomesquita.cdc.livro.domain.entities.Book;
+import com.juliomesquita.cdc.livro.domain.entities.BookSummary;
+import com.juliomesquita.cdc.livro.domain.entities.Category;
 import com.juliomesquita.cdc.livro.domain.repositories.BookRepository;
 import com.juliomesquita.cdc.livro.domain.repositories.BookSummaryRepository;
 import com.juliomesquita.cdc.livro.domain.valueobjects.BookInfo;
@@ -15,10 +19,12 @@ import jakarta.persistence.PersistenceContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
-public class BookService extends GenericService<Book, BookRequest, BookResponse, BookRepository, BookMapper> {
+public class BookService extends GenericService<Book, BookCreateRequest, BookUpdateRequest, BookResponse, BookRepository, BookMapper> {
     @PersistenceContext
     private EntityManager entityManager;
     private final BookSummaryRepository bookSummaryRepository;
@@ -30,8 +36,11 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
 
     @Transactional("transactionManager")
     @Override
-    public BookResponse create(final BookRequest request) {
-        final Book book = createInstanceBook(request);
+    public BookResponse create(final BookCreateRequest request) {
+        final Book book = createInstanceBook(
+            request.title(), request.abstractText(), request.price(), request.numberOfPages(),
+            request.publicationDate(), request.isbn(), request.categoryId(), request.authorId()
+        );
         final Book bookSaved = this.repository.save(book);
 
         try {
@@ -47,8 +56,11 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
 
     @Transactional("transactionManager")
     @Override
-    public BookResponse update(final UUID id, final BookRequest request) {
-        final Book instanceBook = this.createInstanceBook(request);
+    public BookResponse update(final UUID id, final BookUpdateRequest request) {
+        final Book instanceBook = this.createInstanceBook(
+            request.title(), request.abstractText(), request.price(), request.numberOfPages(),
+            request.publicationDate(), request.isbn(), request.categoryId(), request.authorId()
+        );
 
         final Book bookRecover = this.repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id))
@@ -71,21 +83,23 @@ public class BookService extends GenericService<Book, BookRequest, BookResponse,
     @Override
     public BookResponse findById(UUID id) {
         Book book = this.repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
+            .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
 
         this.bookSummaryRepository.findById(id)
-                .ifPresent(summary -> book.setSummary(summary.getSummary()));
+            .ifPresent(summary -> book.setSummary(summary.getSummary()));
 
         return this.mapper.toResponse(book);
     }
 
-    private Book createInstanceBook(final BookRequest request) {
-        final ISBN isbn = ISBN.of(request.isbn());
-        final BookInfo bookInfo = BookInfo.of(
-            request.title(), request.abstractText(), request.price(), request.numberOfPages(), request.publicationDate());
-        final Category category = entityManager.getReference(Category.class, request.categoryId());
-        final Author author = entityManager.getReference(Author.class, request.authorId());
+    private Book createInstanceBook(
+        String title, String abstractText, BigDecimal price, Integer numberOfPages, LocalDate publicationDate,
+        String isbn, UUID categoryId, UUID authorId
+    ) {
+        final ISBN isbnCreated = ISBN.of(isbn);
+        final BookInfo bookInfo = BookInfo.of(title, abstractText, price, numberOfPages, publicationDate);
+        final Category category = entityManager.getReference(Category.class, categoryId);
+        final Author author = entityManager.getReference(Author.class, authorId);
 
-        return Book.create(bookInfo, isbn, category, author);
+        return Book.create(bookInfo, isbnCreated, category, author);
     }
 }

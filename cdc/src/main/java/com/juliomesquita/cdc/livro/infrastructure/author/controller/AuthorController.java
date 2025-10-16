@@ -1,7 +1,8 @@
 package com.juliomesquita.cdc.livro.infrastructure.author.controller;
 
-import com.juliomesquita.cdc.livro.application.author.crud.dtos.AuthorRequest;
+import com.juliomesquita.cdc.livro.application.author.crud.dtos.AuthorCreateRequest;
 import com.juliomesquita.cdc.livro.application.author.crud.dtos.AuthorResponse;
+import com.juliomesquita.cdc.livro.application.author.crud.dtos.AuthorUpdateRequest;
 import com.juliomesquita.cdc.livro.application.author.crud.service.AuthorService;
 import com.juliomesquita.cdc.livro.domain.entities.Author;
 import com.juliomesquita.cdc.livro.infrastructure.author.documentation.AuthorDoc;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/authors")
 @Tag(name = "Author", description = "API for management of authors.")
-public class AuthorController extends GenericController<Author, AuthorRequest, AuthorResponse, AuthorService> implements AuthorDoc {
+public class AuthorController extends GenericController<Author, AuthorCreateRequest, AuthorUpdateRequest, AuthorResponse, AuthorService> implements AuthorDoc {
     public AuthorController(final AuthorService service) {
         super(service);
     }

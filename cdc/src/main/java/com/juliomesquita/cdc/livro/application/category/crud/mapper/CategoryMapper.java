@@ -1,17 +1,17 @@
 package com.juliomesquita.cdc.livro.application.category.crud.mapper;
 
-import com.juliomesquita.cdc.livro.application.category.crud.dtos.CategoryRequest;
+import com.juliomesquita.cdc.livro.application.category.crud.dtos.CategoryCreateRequest;
 import com.juliomesquita.cdc.livro.application.category.crud.dtos.CategoryResponse;
-import com.juliomesquita.cdc.livro.domain.entities.Author;
+import com.juliomesquita.cdc.livro.application.category.crud.dtos.CategoryUpdateRequest;
 import com.juliomesquita.cdc.livro.domain.entities.Category;
 import com.juliomesquita.cdc.shared.services.GenericMapper;
 import org.springframework.stereotype.Component;
 
 @Component
-public class CategoryMapper implements GenericMapper<Category, CategoryRequest, CategoryResponse> {
+public class CategoryMapper implements GenericMapper<Category, CategoryCreateRequest, CategoryUpdateRequest,  CategoryResponse> {
 
     @Override
-    public Category toEntity(final CategoryRequest request) {
+    public Category toEntity(final CategoryCreateRequest request) {
         return Category.create(request.name());
     }
 
@@ -21,7 +21,7 @@ public class CategoryMapper implements GenericMapper<Category, CategoryRequest, 
     }
 
     @Override
-    public Category updateEntityFromRequest(final CategoryRequest request, final Category entity) {
+    public Category updateEntityFromRequest(final CategoryUpdateRequest request, final Category entity) {
         return  entity.update(request.name());
     }
 }

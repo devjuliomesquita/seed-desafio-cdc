@@ -1,7 +1,7 @@
 package com.juliomesquita.cdc.shared.services;
 
-public interface GenericMapper<E, REQ, RESP> {
-    E toEntity(REQ request);
+public interface GenericMapper<E, CREQ, UREQ, RESP> {
+    E toEntity(CREQ request);
     RESP toResponse(E entity);
-    E updateEntityFromRequest(REQ request, E entity);
+    E updateEntityFromRequest(UREQ request, E entity);
 }

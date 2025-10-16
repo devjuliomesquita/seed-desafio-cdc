@@ -1,7 +1,8 @@
 package com.juliomesquita.cdc.livro.infrastructure.book.controller;
 
-import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookRequest;
+import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookCreateRequest;
 import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookResponse;
+import com.juliomesquita.cdc.livro.application.book.crud.dtos.BookUpdateRequest;
 import com.juliomesquita.cdc.livro.application.book.crud.service.BookService;
 import com.juliomesquita.cdc.livro.application.book.usecases.findpartial.BookPartialResponse;
 import com.juliomesquita.cdc.livro.application.book.usecases.findpartial.FindPartialUseCase;
@@ -20,7 +21,7 @@ import java.util.Objects;
 @RestController
 @RequestMapping("/books")
 @Tag(name = "Books", description = "API for management of books.")
-public class BookController extends GenericController<Book, BookRequest, BookResponse, BookService>
+public class BookController extends GenericController<Book, BookCreateRequest, BookUpdateRequest, BookResponse, BookService>
 implements BookDoc {
     private final FindPartialUseCase findPartialUseCase;
     public BookController(final BookService service, final FindPartialUseCase findPartialUseCase) {

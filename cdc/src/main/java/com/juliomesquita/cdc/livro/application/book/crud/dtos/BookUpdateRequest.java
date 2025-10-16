@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-public record BookRequest(
+public record BookUpdateRequest(
 
     @NotBlank(message = "{validation.not.blank}")
     @UniqueValue(domainClass = Book.class, fieldName = "info.title", message = "{validation.unique.value}")
@@ -49,4 +49,5 @@ public record BookRequest(
     @ExistValue(domainClass = Author.class, fieldName = "id", message = "{validation.unique.value}")
     UUID authorId
 ) {
+
 }

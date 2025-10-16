@@ -2,7 +2,6 @@ package com.juliomesquita.cdc.shared.controllers.doc;
 
 import com.juliomesquita.cdc.shared.utils.DefaultPublicAPIResponses;
 import com.juliomesquita.cdc.shared.utils.Pagination;
-import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -13,12 +12,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.UUID;
 
-public interface GenericDoc<REQ, RESP> {
+public interface GenericDoc<CREQ, UREQ, RESP> {
 
     @Operation(summary = "Create a new resource", operationId = "create", description = "This endpoint receives the necessary parameters for creating a resource.")
     @ApiResponse(responseCode = "201", description = "Resource created successfully")
     @DefaultPublicAPIResponses
-    ResponseEntity<RESP> create(@RequestBody REQ request);
+    ResponseEntity<RESP> create(@RequestBody CREQ request);
 
     @Operation(summary = "Find a resource by its ID", operationId = "findById", description = "This endpoint receives the necessary parameters for find of the resource.")
     @ApiResponse(responseCode = "200", description = "Resource found")
@@ -31,7 +30,7 @@ public interface GenericDoc<REQ, RESP> {
     ResponseEntity<Pagination<RESP>> findAll(
         @RequestParam(value = "page") @DefaultValue("1") int page,
         @RequestParam(value = "size") @DefaultValue("10") int size,
-        @RequestParam("terms") String terms,
+        @RequestParam(value = "terms", required = false) String terms,
         @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
         @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction
     );
@@ -39,7 +38,7 @@ public interface GenericDoc<REQ, RESP> {
     @Operation(summary = "Update an existing resource by its ID", operationId = "update", description = "This endpoint receives the necessary parameters for updating a resource.")
     @ApiResponse(responseCode = "200", description = "Resource updated successfully")
     @DefaultPublicAPIResponses
-    ResponseEntity<RESP> update(@PathVariable UUID id, @RequestBody REQ request);
+    ResponseEntity<RESP> update(@PathVariable UUID id, @RequestBody UREQ request);
 
     @Operation(summary = "Delete a resource by its ID", operationId = "delete", description = "This endpoint receives the necessary parameters for deleting a resource.")
     @ApiResponse(responseCode = "204", description = "Resource deleted successfully")

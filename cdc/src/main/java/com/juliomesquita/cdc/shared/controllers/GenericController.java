@@ -13,10 +13,11 @@ import java.util.UUID;
 
 public abstract class GenericController<
     E extends BaseEntityWithGeneratedId,
-    REQ,
+    CREQ,
+    UREQ,
     RESP,
-    S extends GenericService<E, REQ, RESP, ?, ?>>
-    implements GenericDoc<REQ, RESP> {
+    S extends GenericService<E, CREQ, UREQ, RESP, ?, ?>>
+    implements GenericDoc<CREQ, UREQ, RESP> {
 
     protected final S service;
 
@@ -26,7 +27,7 @@ public abstract class GenericController<
 
     @Override
     @PostMapping
-    public ResponseEntity<RESP> create(@Valid @RequestBody REQ request) {
+    public ResponseEntity<RESP> create(@Valid @RequestBody CREQ request) {
         return ResponseEntity.status(201).body(service.create(request));
     }
 
@@ -46,7 +47,7 @@ public abstract class GenericController<
 
     @Override
     @PutMapping("/{id}")
-    public ResponseEntity<RESP> update(@PathVariable UUID id, @Valid @RequestBody REQ request) {
+    public ResponseEntity<RESP> update(@PathVariable UUID id, @Valid @RequestBody UREQ request) {
         return ResponseEntity.ok(service.update(id, request));
     }
 

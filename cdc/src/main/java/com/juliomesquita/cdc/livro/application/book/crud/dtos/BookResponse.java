@@ -2,7 +2,6 @@ package com.juliomesquita.cdc.livro.application.book.crud.dtos;
 
 import com.juliomesquita.cdc.livro.application.author.crud.dtos.AuthorResponse;
 import com.juliomesquita.cdc.livro.application.category.crud.dtos.CategoryResponse;
-import com.juliomesquita.cdc.livro.domain.entities.Author;
 import com.juliomesquita.cdc.livro.domain.entities.Book;
 import com.juliomesquita.cdc.livro.domain.valueobjects.BookInfo;
 import com.juliomesquita.cdc.livro.domain.valueobjects.ISBN;

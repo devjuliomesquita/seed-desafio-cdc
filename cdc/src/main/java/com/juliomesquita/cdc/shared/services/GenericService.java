@@ -6,7 +6,6 @@ import com.juliomesquita.cdc.shared.repositories.GenericRepository;
 import com.juliomesquita.cdc.shared.repositories.SpecificationUtils;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
-import com.juliomesquita.cdc.shared.utils.SearchQueryUtils;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -16,10 +15,11 @@ import java.util.UUID;
 
 public abstract class GenericService<
     E extends BaseEntityWithGeneratedId,
-    REQ,
+    CREQ,
+    UREQ,
     RESP,
     R extends GenericRepository<E>,
-    M extends GenericMapper<E, REQ, RESP>
+    M extends GenericMapper<E, CREQ, UREQ, RESP>
     > {
 
     protected final R repository;
@@ -31,7 +31,7 @@ public abstract class GenericService<
     }
 
     @Transactional("transactionManager")
-    public RESP create(final REQ request) {
+    public RESP create(final CREQ request) {
         E entity = mapper.toEntity(request);
         E savedEntity = repository.save(entity);
         return mapper.toResponse(savedEntity);
@@ -60,7 +60,7 @@ public abstract class GenericService<
     }
 
     @Transactional("transactionManager")
-    public RESP update(final UUID id, final REQ request) {
+    public RESP update(final UUID id, final UREQ request) {
         E entity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
 
