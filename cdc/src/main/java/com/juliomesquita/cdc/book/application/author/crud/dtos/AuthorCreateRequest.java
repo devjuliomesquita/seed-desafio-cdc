@@ -2,6 +2,7 @@ package com.juliomesquita.cdc.book.application.author.crud.dtos;
 
 
 import com.juliomesquita.cdc.book.domain.entities.Author;
+import com.juliomesquita.cdc.shared.services.GenericMapperCr;
 import com.juliomesquita.cdc.shared.validators.UniqueValue;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -20,5 +21,9 @@ public record AuthorCreateRequest(
     @NotBlank(message = "{validation.not.blank}")
     @Size(max = 400, message = "{validation.size.max}")
     String description
-) {
+) implements GenericMapperCr<Author> {
+    @Override
+    public Author toDomain() {
+        return Author.create(name, email, description);
+    }
 }

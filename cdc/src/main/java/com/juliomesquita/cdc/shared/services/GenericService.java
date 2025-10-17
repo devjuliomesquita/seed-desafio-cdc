@@ -1,7 +1,6 @@
 package com.juliomesquita.cdc.shared.services;
 
 import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
-import com.juliomesquita.cdc.shared.exceptions.DatabaseErrorFormatter;
 import com.juliomesquita.cdc.shared.exceptions.FieldDuplicatedException;
 import com.juliomesquita.cdc.shared.exceptions.InternalApplicationErrorException;
 import com.juliomesquita.cdc.shared.exceptions.ResourceNotFoundException;
@@ -17,15 +16,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-import static com.juliomesquita.cdc.shared.exceptions.DatabaseErrorFormatter.*;
+import static com.juliomesquita.cdc.shared.exceptions.DatabaseErrorFormatter.extractReadableMessage;
 
 public abstract class GenericService<
     E extends BaseEntityWithGeneratedId,
-    CREQ,
-    UREQ,
+    CREQ extends GenericMapperCr<E>,
+    UREQ extends GenericMapperUp<E>,
     RESP,
     R extends GenericRepository<E>,
-    M extends GenericMapper<E, CREQ, UREQ, RESP>
+    M extends GenericMapperRes<E, RESP>
     > {
 
     protected final R repository;
@@ -38,7 +37,7 @@ public abstract class GenericService<
 
     @Transactional("transactionManager")
     public RESP create(final CREQ request) {
-        E entity = mapper.toEntity(request);
+        E entity = request.toDomain();
         E savedEntity = repository.save(entity);
         return mapper.toResponse(savedEntity);
     }
@@ -67,12 +66,11 @@ public abstract class GenericService<
 
     @Transactional("transactionManager")
     public RESP update(final UUID id, final UREQ request) {
-        E entity = repository.findById(id)
+        final E entity = repository.findById(id)
             .orElseThrow(() -> new ResourceNotFoundException("Resource not found with id: " + id));
-
-        mapper.updateEntityFromRequest(request, entity);
+        final E entityUpdated = request.toDomain(entity);
         try {
-            E savedEntity = repository.save(entity);
+            final E savedEntity = repository.save(entityUpdated);
             repository.flush();
             return mapper.toResponse(savedEntity);
         } catch (DataIntegrityViolationException ex) {

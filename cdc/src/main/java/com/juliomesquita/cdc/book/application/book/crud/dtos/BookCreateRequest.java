@@ -4,6 +4,8 @@ package com.juliomesquita.cdc.book.application.book.crud.dtos;
 import com.juliomesquita.cdc.book.domain.entities.Author;
 import com.juliomesquita.cdc.book.domain.entities.Book;
 import com.juliomesquita.cdc.book.domain.entities.Category;
+import com.juliomesquita.cdc.shared.exceptions.FeatureNotImplementedException;
+import com.juliomesquita.cdc.shared.services.GenericMapperCr;
 import com.juliomesquita.cdc.shared.validators.ExistValue;
 import com.juliomesquita.cdc.shared.validators.UniqueValue;
 import jakarta.validation.constraints.*;
@@ -48,5 +50,9 @@ public record BookCreateRequest(
     @NotNull(message = "{validation.not.null}")
     @ExistValue(domainClass = Author.class, fieldName = "id", message = "{validation.unique.value}")
     UUID authorId
-) {
+) implements GenericMapperCr<Book> {
+    @Override
+    public Book toDomain() {
+        throw  new FeatureNotImplementedException("Use BookService.createInstanceBook() instead");
+    }
 }

@@ -3,7 +3,7 @@ package com.juliomesquita.cdc.book.application.book.crud.service;
 import com.juliomesquita.cdc.book.application.book.crud.dtos.BookCreateRequest;
 import com.juliomesquita.cdc.book.application.book.crud.dtos.BookResponse;
 import com.juliomesquita.cdc.book.application.book.crud.dtos.BookUpdateRequest;
-import com.juliomesquita.cdc.book.application.book.crud.mapper.BookMapper;
+import com.juliomesquita.cdc.book.application.book.crud.mapper.BookMapperRes;
 import com.juliomesquita.cdc.book.domain.entities.Author;
 import com.juliomesquita.cdc.book.domain.entities.Book;
 import com.juliomesquita.cdc.book.domain.entities.BookSummary;
@@ -24,12 +24,12 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Service
-public class BookService extends GenericService<Book, BookCreateRequest, BookUpdateRequest, BookResponse, BookRepository, BookMapper> {
+public class BookService extends GenericService<Book, BookCreateRequest, BookUpdateRequest, BookResponse, BookRepository, BookMapperRes> {
     @PersistenceContext
     private EntityManager entityManager;
     private final BookSummaryRepository bookSummaryRepository;
 
-    public BookService(final BookRepository repository, final BookMapper mapper, BookSummaryRepository bookSummaryRepository) {
+    public BookService(final BookRepository repository, final BookMapperRes mapper, BookSummaryRepository bookSummaryRepository) {
         super(repository, mapper);
         this.bookSummaryRepository = bookSummaryRepository;
     }

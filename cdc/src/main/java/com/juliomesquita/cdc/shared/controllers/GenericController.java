@@ -2,6 +2,8 @@ package com.juliomesquita.cdc.shared.controllers;
 
 import com.juliomesquita.cdc.shared.controllers.doc.GenericDoc;
 import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
+import com.juliomesquita.cdc.shared.services.GenericMapperCr;
+import com.juliomesquita.cdc.shared.services.GenericMapperUp;
 import com.juliomesquita.cdc.shared.services.GenericService;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
@@ -13,8 +15,8 @@ import java.util.UUID;
 
 public abstract class GenericController<
     E extends BaseEntityWithGeneratedId,
-    CREQ,
-    UREQ,
+    CREQ extends GenericMapperCr<E>,
+    UREQ extends GenericMapperUp<E>,
     RESP,
     S extends GenericService<E, CREQ, UREQ, RESP, ?, ?>>
     implements GenericDoc<CREQ, UREQ, RESP> {
