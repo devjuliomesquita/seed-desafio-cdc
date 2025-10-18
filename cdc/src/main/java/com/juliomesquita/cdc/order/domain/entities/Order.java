@@ -112,7 +112,5 @@ public class Order extends BaseEntityWithGeneratedId {
 
     public BigDecimal getDiscountPrice() {
         return discountPrice;
-
-
     }
 }
