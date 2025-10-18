@@ -63,6 +63,11 @@ public class Order extends BaseEntityWithGeneratedId {
         return new Order(userInfos, new HashMap<>(), BigDecimal.ZERO, null, BigDecimal.ZERO, OrderStatus.CREATED);
     }
 
+    public Order updateGeneral(final UserInfos userInfos ) {
+        this.userInfos = userInfos;
+        return this;
+    }
+
     public Order updateItems(final Map<BookId, Integer> items, final BigDecimal totalPrice) {
         this.items = items;
         this.totalPrice = totalPrice;
