@@ -15,6 +15,6 @@ import java.util.UUID;
 public interface BookRepository extends GenericRepository<Book> {
     long countByIdIn(Iterable<UUID> ids);
 
-    @Query("SELECT new com.juliomesquita.cdc.book.application.dto.BookPriceInfo(b.id, b.info.price) FROM Book b WHERE b.id IN :ids")
+    @Query("SELECT new com.juliomesquita.cdc.book.domain.repositories.dtos.BookPriceInfo(b.id, b.info.price) FROM Book b WHERE b.id IN :ids")
     List<BookPriceInfo> findPriceInfoByIdIn(@Param("ids") Collection<UUID> ids);
 }

@@ -60,3 +60,13 @@ server:
     threads:
       worker: 64
       io: 4
+
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    tags-sorter: alpha
+    doc-expansion: none
+    operations-sorter: alpha
+    filter: true
