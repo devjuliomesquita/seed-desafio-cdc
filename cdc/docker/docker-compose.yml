@@ -1,0 +1,40 @@
+services:
+  postgres:
+    container_name: project_core_cdc_postgres
+    image: postgres:latest
+    restart: always
+    tty: true
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: core_cdc
+      PGDATA: /data/postgres
+    volumes:
+      - ./dbdata:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - project_core_cdc_network
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
+      interval: 10s
+      retries: 5
+      start_period: 10s
+
+
+  mongo:
+    container_name: project_core_cdc_mongo
+    image: mongo:latest
+    restart: always
+    tty: true
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: mongo
+      MONGO_INITDB_ROOT_PASSWORD: mongo
+    ports:
+      - "27017:27017"
+    networks:
+      - project_core_cdc_network
+
+networks:
+  project_core_cdc_network:
+    driver: bridge
