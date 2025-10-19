@@ -5,7 +5,7 @@ import com.juliomesquita.cdc.shared.exceptions.FieldDuplicatedException;
 import com.juliomesquita.cdc.shared.exceptions.InternalApplicationErrorException;
 import com.juliomesquita.cdc.shared.exceptions.ResourceNotFoundException;
 import com.juliomesquita.cdc.shared.repositories.GenericRepository;
-import com.juliomesquita.cdc.shared.repositories.SpecificationUtilsCustom;
+import com.juliomesquita.cdc.shared.repositories.SpecificationUtils;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -53,7 +53,7 @@ public abstract class GenericService<
     public Pagination<RESP> findAll(final SearchQuery searchQuery) {
         final PageRequest pageRequest = searchQuery.toPageRequest();
 
-        final Specification<E> specification = SpecificationUtilsCustom.build(searchQuery);
+        final Specification<E> specification = SpecificationUtils.build(searchQuery);
 
         final Page<E> pageable = this.repository.findAll(specification, pageRequest);
         return Pagination.create(

@@ -25,7 +25,7 @@ public interface GenericDoc<CREQ, UREQ, RESP> {
     @DefaultPublicAPIResponses
     ResponseEntity<RESP> findById(@PathVariable UUID id);
 
-    @Operation(summary = "List all resources with pagination and search", operationId = "findAll", description = "This endpoint receives the necessary parameters for find an list of the resources.")
+        @Operation(summary = "List all resources with pagination and search", operationId = "findAll", description = "This endpoint finds a list of resources. For a list of available filter fields and relations, see the '/search-metadata' endpoint for this resource.")
     @ApiResponse(responseCode = "200", description = "Resources listed successfully")
     @DefaultPublicAPIResponses
     ResponseEntity<Pagination<RESP>> findAll(

@@ -11,8 +11,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class SpecificationUtilsCustom {
-    private SpecificationUtilsCustom() {
+public final class SpecificationUtils {
+    private SpecificationUtils() {
     }
 
     public static <T> Specification<T> build(final SearchQuery query) {
