@@ -78,6 +78,10 @@ public class Order extends BaseEntityWithGeneratedId {
     public Order applyCoupon(final CouponId couponId, final BigDecimal discountPrice) {
         this.couponId = couponId;
         this.discountPrice = discountPrice;
+        return this;
+    }
+
+    public Order finalizeOrder() {
         this.status = OrderStatus.FINALIZED;
         return this;
     }
