@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/coupons")
 @Tag(name = "Coupons", description = "API for management of Coupons.")
-public class CouponController extends GenericController<Coupon, CouponCreateRequest, CouponUpdateRequest, CouponResponse, Filter, CouponService> {
+public class CouponController extends GenericController<Coupon, CouponCreateRequest, CouponUpdateRequest, CouponResponse, CouponService> {
     public CouponController(final CouponService service) {
         super(service);
     }

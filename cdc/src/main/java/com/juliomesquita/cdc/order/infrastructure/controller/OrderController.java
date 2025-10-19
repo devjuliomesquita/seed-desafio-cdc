@@ -20,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/orders")
 @Tag(name = "Orders", description = "API for management of orders.")
-public class OrderController extends GenericController<Order, OrderCreateRequest, OrderUpdateRequest, OrderResponse, Filter,  OrderService> implements OrderDoc {
+public class OrderController extends GenericController<Order, OrderCreateRequest, OrderUpdateRequest, OrderResponse,  OrderService> implements OrderDoc {
     private final FinalizedUseCase finalizedUseCase;
 
     public OrderController(final OrderService service, final FinalizedUseCase finalizedUseCase) {

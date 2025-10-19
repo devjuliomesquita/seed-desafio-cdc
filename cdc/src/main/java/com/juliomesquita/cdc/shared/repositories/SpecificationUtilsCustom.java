@@ -14,11 +14,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public final class SpecificationUtils {
-    private SpecificationUtils() {
+public final class SpecificationUtilsCustom {
+    private SpecificationUtilsCustom() {
     }
 
     public static <T> Specification<T> build(final SearchQuery query) {
+
+
         MapParam mapParam = SearchQueryUtils.buildParams(query);
         if (mapParam.params().isEmpty()) {
             return emptySpecification();

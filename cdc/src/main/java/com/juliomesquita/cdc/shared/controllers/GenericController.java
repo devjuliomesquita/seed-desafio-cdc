@@ -5,6 +5,7 @@ import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
 import com.juliomesquita.cdc.shared.services.GenericMapperCr;
 import com.juliomesquita.cdc.shared.services.GenericMapperUp;
 import com.juliomesquita.cdc.shared.services.GenericService;
+import com.juliomesquita.cdc.shared.utils.Filter;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import jakarta.validation.Valid;
@@ -19,9 +20,8 @@ public abstract class GenericController<
     CREQ extends GenericMapperCr<E>,
     UREQ extends GenericMapperUp<E>,
     RESP,
-    F,
     S extends GenericService<E, CREQ, UREQ, RESP, ?, ?>>
-    implements GenericDoc<CREQ, UREQ, RESP, F> {
+    implements GenericDoc<CREQ, UREQ, RESP> {
 
     protected final S service;
 
@@ -44,8 +44,8 @@ public abstract class GenericController<
     @Override
     @GetMapping
     public ResponseEntity<Pagination<RESP>> findAll(
-        int currentPage, int itemsPerPage, String terms, String sort, String direction, List<F> filters) {
-        final SearchQuery<F> searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction, filters);
+        int currentPage, int itemsPerPage, String terms, String sort, String direction, List<Filter> filters) {
+        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction, filters);
         return ResponseEntity.ok(service.findAll(searchQuery));
     }
 

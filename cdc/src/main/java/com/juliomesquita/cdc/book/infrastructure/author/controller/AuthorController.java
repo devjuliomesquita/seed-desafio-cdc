@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/authors")
 @Tag(name = "Author", description = "API for management of authors.")
-public class AuthorController extends GenericController<Author, AuthorCreateRequest, AuthorUpdateRequest, AuthorResponse, Filter, AuthorService> implements AuthorDoc {
+public class AuthorController extends GenericController<Author, AuthorCreateRequest, AuthorUpdateRequest, AuthorResponse, AuthorService> implements AuthorDoc {
     public AuthorController(final AuthorService service) {
         super(service);
     }

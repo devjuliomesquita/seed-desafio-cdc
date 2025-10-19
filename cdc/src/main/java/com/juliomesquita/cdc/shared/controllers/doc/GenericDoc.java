@@ -1,6 +1,7 @@
 package com.juliomesquita.cdc.shared.controllers.doc;
 
 import com.juliomesquita.cdc.shared.utils.DefaultPublicAPIResponses;
+import com.juliomesquita.cdc.shared.utils.Filter;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.UUID;
 
-public interface GenericDoc<CREQ, UREQ, RESP, F> {
+public interface GenericDoc<CREQ, UREQ, RESP> {
 
     @Operation(summary = "Create a new resource", operationId = "create", description = "This endpoint receives the necessary parameters for creating a resource.")
     @ApiResponse(responseCode = "201", description = "Resource created successfully")
@@ -34,7 +35,7 @@ public interface GenericDoc<CREQ, UREQ, RESP, F> {
         @RequestParam(value = "terms", required = false) String terms,
         @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
         @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction,
-        @RequestBody List<F> filters
+        @RequestBody List<Filter> filters
         );
 
     @Operation(summary = "Update an existing resource by its ID", operationId = "update", description = "This endpoint receives the necessary parameters for updating a resource.")

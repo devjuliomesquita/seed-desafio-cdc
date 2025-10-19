@@ -5,13 +5,13 @@ import org.springframework.data.domain.Sort;
 
 import java.util.List;
 
-public record SearchQuery<T>(
+public record SearchQuery(
     int currentPage,
     int itemsPerPage,
     String terms,
     String sort,
     String direction,
-    List<T> filters
+    List<Filter> filters
 ) {
     public PageRequest toPageRequest() {
         return PageRequest.of(
