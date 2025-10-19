@@ -18,7 +18,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+
+import static com.juliomesquita.cdc.book.infrastructure.book.documentation.BookMetadata.searchableFields;
+import static com.juliomesquita.cdc.book.infrastructure.book.documentation.BookMetadata.searchableRelations;
 
 @RestController
 @RequestMapping("/books")
@@ -37,5 +41,13 @@ public class BookController extends GenericController<Book, BookCreateRequest, B
         final SearchQuery searchQuery = new SearchQuery(page, size, sort, direction, filters);
         final Pagination<BookPartialResponse> response = this.findPartialUseCase.execute(searchQuery);
         return ResponseEntity.ok(response);
+    }
+
+    @Override
+    public ResponseEntity<Map<String, Object>> getSearchMetadataEndpoint() {
+        return ResponseEntity.ok(Map.of(
+            "searchableFields", searchableFields(),
+            "searchableRelations", searchableRelations()
+        ));
     }
 }

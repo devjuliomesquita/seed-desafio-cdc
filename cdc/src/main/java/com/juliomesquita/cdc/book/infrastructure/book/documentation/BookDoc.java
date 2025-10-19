@@ -1,6 +1,7 @@
 package com.juliomesquita.cdc.book.infrastructure.book.documentation;
 
 import com.juliomesquita.cdc.book.application.book.usecases.findpartial.BookPartialResponse;
+import com.juliomesquita.cdc.shared.doc.MetadataDoc;
 import com.juliomesquita.cdc.shared.utils.DefaultPublicAPIResponses;
 import com.juliomesquita.cdc.shared.utils.Filter;
 import com.juliomesquita.cdc.shared.utils.Pagination;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-public interface BookDoc {
+public interface BookDoc extends MetadataDoc {
     @Operation(summary = "List all parcial resources with pagination and search", operationId = "findAllPartial", description = "This endpoint receives the necessary parameters for find an list of the resources.")
     @ApiResponse(responseCode = "200", description = "Resources listed successfully")
     @DefaultPublicAPIResponses
