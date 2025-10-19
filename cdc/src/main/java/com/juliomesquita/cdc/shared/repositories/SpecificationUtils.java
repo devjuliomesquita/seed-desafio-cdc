@@ -16,13 +16,11 @@ public final class SpecificationUtils {
     }
 
     public static <T> Specification<T> build(final SearchQuery query) {
-        //Devolver uma specification vazia se não houver filtros
         List<Filter> filters = query.filters();
         if (filters == null || filters.isEmpty()) {
             return emptySpecification();
         }
 
-        //itear sobre os filtros e criar specifications individuais
         List<Specification<T>> specs = new ArrayList<>();
         for (Filter filter : filters) {
             specs.add(createSpecification(filter));
@@ -41,13 +39,11 @@ public final class SpecificationUtils {
             try {
                 final SearchOperation operator = SearchOperation.getSimpleOperation(filter.operator());
                 if (operator == null) {
-                    return cb.conjunction(); // Or throw an exception for invalid operator
+                    return cb.conjunction();
                 }
 
                 Path<Object> path;
                 if (StringUtils.hasText(filter.relation())) {
-                    // Handle joins
-
                     Join<?, ?> join = root.getJoins().stream()
                         .filter(j -> j.getAttribute().getName().equals(filter.relation()))
                         .findFirst()
@@ -80,7 +76,6 @@ public final class SpecificationUtils {
                     default -> cb.conjunction();
                 };
             } catch (IllegalArgumentException e) {
-                // This can happen if the field or relation does not exist.
                 return cb.conjunction();
             }
         };
@@ -137,7 +132,7 @@ public final class SpecificationUtils {
 
     private static Object convertToFieldType(Object value, Class<?> fieldType) {
         if (value == null) return null;
-        String stringValue = value.toString();
+        final String stringValue = value.toString();
         try {
             if (fieldType.isAssignableFrom(BigDecimal.class)) {
                 return new BigDecimal(stringValue);

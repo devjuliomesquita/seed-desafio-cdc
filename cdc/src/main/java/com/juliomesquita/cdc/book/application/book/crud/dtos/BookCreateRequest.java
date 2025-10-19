@@ -44,11 +44,11 @@ public record BookCreateRequest(
     String isbn,
 
     @NotNull(message = "{validation.not.null}")
-    @ExistValue(domainClass = Category.class, fieldName = "id", message = "{validation.unique.value}")
+    @ExistValue(domainClass = Category.class, fieldName = "id", message = "{validation.exist.value}")
     UUID categoryId,
 
     @NotNull(message = "{validation.not.null}")
-    @ExistValue(domainClass = Author.class, fieldName = "id", message = "{validation.unique.value}")
+    @ExistValue(domainClass = Author.class, fieldName = "id", message = "{validation.exist.value}")
     UUID authorId
 ) implements GenericMapperCr<Book> {
     @Override
