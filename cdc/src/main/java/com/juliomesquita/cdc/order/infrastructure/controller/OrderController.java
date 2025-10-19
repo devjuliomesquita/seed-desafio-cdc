@@ -8,6 +8,7 @@ import com.juliomesquita.cdc.order.application.usecases.FinalizedUseCase;
 import com.juliomesquita.cdc.order.domain.entities.Order;
 import com.juliomesquita.cdc.order.infrastructure.documentation.OrderDoc;
 import com.juliomesquita.cdc.shared.controllers.GenericController;
+import com.juliomesquita.cdc.shared.utils.Filter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +20,7 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/orders")
 @Tag(name = "Orders", description = "API for management of orders.")
-public class OrderController extends GenericController<Order, OrderCreateRequest, OrderUpdateRequest, OrderResponse, OrderService> implements OrderDoc {
+public class OrderController extends GenericController<Order, OrderCreateRequest, OrderUpdateRequest, OrderResponse, Filter,  OrderService> implements OrderDoc {
     private final FinalizedUseCase finalizedUseCase;
 
     public OrderController(final OrderService service, final FinalizedUseCase finalizedUseCase) {

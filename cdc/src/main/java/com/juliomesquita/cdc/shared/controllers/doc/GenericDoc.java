@@ -10,9 +10,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
 import java.util.UUID;
 
-public interface GenericDoc<CREQ, UREQ, RESP> {
+public interface GenericDoc<CREQ, UREQ, RESP, F> {
 
     @Operation(summary = "Create a new resource", operationId = "create", description = "This endpoint receives the necessary parameters for creating a resource.")
     @ApiResponse(responseCode = "201", description = "Resource created successfully")
@@ -32,8 +33,9 @@ public interface GenericDoc<CREQ, UREQ, RESP> {
         @RequestParam(value = "size") @DefaultValue("10") int size,
         @RequestParam(value = "terms", required = false) String terms,
         @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
-        @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction
-    );
+        @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction,
+        @RequestBody List<F> filters
+        );
 
     @Operation(summary = "Update an existing resource by its ID", operationId = "update", description = "This endpoint receives the necessary parameters for updating a resource.")
     @ApiResponse(responseCode = "200", description = "Resource updated successfully")

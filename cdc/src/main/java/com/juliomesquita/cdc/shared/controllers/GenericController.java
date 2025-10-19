@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public abstract class GenericController<
@@ -18,8 +19,9 @@ public abstract class GenericController<
     CREQ extends GenericMapperCr<E>,
     UREQ extends GenericMapperUp<E>,
     RESP,
+    F,
     S extends GenericService<E, CREQ, UREQ, RESP, ?, ?>>
-    implements GenericDoc<CREQ, UREQ, RESP> {
+    implements GenericDoc<CREQ, UREQ, RESP, F> {
 
     protected final S service;
 
@@ -42,8 +44,8 @@ public abstract class GenericController<
     @Override
     @GetMapping
     public ResponseEntity<Pagination<RESP>> findAll(
-        int currentPage, int itemsPerPage, String terms, String sort, String direction) {
-        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction);
+        int currentPage, int itemsPerPage, String terms, String sort, String direction, List<F> filters) {
+        final SearchQuery<F> searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction, filters);
         return ResponseEntity.ok(service.findAll(searchQuery));
     }
 
