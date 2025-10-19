@@ -1,67 +1,64 @@
 package com.juliomesquita.cdc.shared.repositories;
 
-import com.juliomesquita.cdc.shared.utils.MapParam;
+import com.juliomesquita.cdc.shared.utils.Filter;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
-import com.juliomesquita.cdc.shared.utils.SearchQueryUtils;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.Path;
-import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.*;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public final class SpecificationUtilsCustom {
     private SpecificationUtilsCustom() {
     }
 
     public static <T> Specification<T> build(final SearchQuery query) {
-
-
-        MapParam mapParam = SearchQueryUtils.buildParams(query);
-        if (mapParam.params().isEmpty()) {
+        //Devolver uma specification vazia se não houver filtros
+        List<Filter> filters = query.filters();
+        if (filters == null || filters.isEmpty()) {
             return emptySpecification();
         }
 
-        Map<String, List<Map.Entry<String, Object>>> groupedByBaseKey =
-            mapParam.params().entrySet().stream()
-                .collect(Collectors.groupingBy(entry -> entry.getKey().replaceAll("\\d+$", "")));
-
-        Specification<T> overallSpec = emptySpecification();
-
-        for (Map.Entry<String, List<Map.Entry<String, Object>>> group : groupedByBaseKey.entrySet()) {
-            String baseKey = group.getKey();
-            List<Map.Entry<String, Object>> params = group.getValue();
-
-            Specification<T> groupSpec = null;
-            for (Map.Entry<String, Object> param : params) {
-                SearchOperation operator = mapParam.operations().get(param.getKey());
-                Specification<T> currentSpec = createSpecification(baseKey, operator, param.getValue());
-
-                if (groupSpec == null) {
-                    groupSpec = currentSpec;
-                } else {
-                    groupSpec = groupSpec.or(currentSpec);
-                }
-            }
-
-            if (groupSpec != null) {
-                overallSpec = overallSpec.and(groupSpec);
-            }
+        //itear sobre os filtros e criar specifications individuais
+        List<Specification<T>> specs = new ArrayList<>();
+        for (Filter filter : filters) {
+            specs.add(createSpecification(filter));
         }
 
-        return overallSpec;
+        Specification<T> result = specs.getFirst();
+        for (int i = 1; i < specs.size(); i++) {
+            result = result.and(specs.get(i));
+        }
+
+        return result;
     }
 
-    private static <T> Specification<T> createSpecification(String attribute, SearchOperation operator, Object value) {
+    private static <T> Specification<T> createSpecification(final Filter filter) {
         return (root, query, cb) -> {
             try {
-                Path<Object> path = root.get(attribute);
+                final SearchOperation operator = SearchOperation.getSimpleOperation(filter.operator());
+                if (operator == null) {
+                    return cb.conjunction(); // Or throw an exception for invalid operator
+                }
+
+                Path<Object> path;
+                if (StringUtils.hasText(filter.relation())) {
+                    // Handle joins
+
+                    Join<?, ?> join = root.getJoins().stream()
+                        .filter(j -> j.getAttribute().getName().equals(filter.relation()))
+                        .findFirst()
+                        .orElseGet(() -> root.join(filter.relation(), JoinType.LEFT));
+                    path = join.get(filter.field());
+                } else {
+                    path = root.get(filter.field());
+                }
+
                 Class<?> fieldType = path.getJavaType();
-                Object typedValue = convertToFieldType(value, fieldType);
+                Object typedValue = convertToFieldType(filter.value(), fieldType);
 
                 if (typedValue == null && operator != SearchOperation.NULL && operator != SearchOperation.NOT_NULL) {
                     return cb.conjunction();
@@ -83,6 +80,7 @@ public final class SpecificationUtilsCustom {
                     default -> cb.conjunction();
                 };
             } catch (IllegalArgumentException e) {
+                // This can happen if the field or relation does not exist.
                 return cb.conjunction();
             }
         };
@@ -149,6 +147,8 @@ public final class SpecificationUtilsCustom {
                 return Integer.parseInt(stringValue);
             } else if (fieldType.isAssignableFrom(LocalDate.class)) {
                 return LocalDate.parse(stringValue);
+            } else if (fieldType.isEnum()) {
+                return Enum.valueOf((Class<Enum>) fieldType, stringValue.toUpperCase());
             }
         } catch (Exception e) {
             return null;

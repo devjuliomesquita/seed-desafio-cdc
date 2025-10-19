@@ -33,8 +33,8 @@ public class BookController extends GenericController<Book, BookCreateRequest, B
     }
 
     @Override
-    public ResponseEntity<Pagination<BookPartialResponse>> findAllPartial(int page, int size, String terms, String sort, String direction, List<Filter> filters) {
-        final SearchQuery searchQuery = new SearchQuery(page, size, terms, sort, direction, filters);
+    public ResponseEntity<Pagination<BookPartialResponse>> findAllPartial(int page, int size,  String sort, String direction, List<Filter> filters) {
+        final SearchQuery searchQuery = new SearchQuery(page, size, sort, direction, filters);
         final Pagination<BookPartialResponse> response = this.findPartialUseCase.execute(searchQuery);
         return ResponseEntity.ok(response);
     }

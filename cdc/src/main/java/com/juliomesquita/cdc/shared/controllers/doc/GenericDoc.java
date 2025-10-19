@@ -1,7 +1,7 @@
 package com.juliomesquita.cdc.shared.controllers.doc;
 
+import com.juliomesquita.cdc.shared.controllers.FilterRequest;
 import com.juliomesquita.cdc.shared.utils.DefaultPublicAPIResponses;
-import com.juliomesquita.cdc.shared.utils.Filter;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.UUID;
 
 public interface GenericDoc<CREQ, UREQ, RESP> {
@@ -32,10 +31,9 @@ public interface GenericDoc<CREQ, UREQ, RESP> {
     ResponseEntity<Pagination<RESP>> findAll(
         @RequestParam(value = "page") @DefaultValue("1") int page,
         @RequestParam(value = "size") @DefaultValue("10") int size,
-        @RequestParam(value = "terms", required = false) String terms,
         @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
         @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction,
-        @RequestBody List<Filter> filters
+        @RequestBody FilterRequest filters
         );
 
     @Operation(summary = "Update an existing resource by its ID", operationId = "update", description = "This endpoint receives the necessary parameters for updating a resource.")

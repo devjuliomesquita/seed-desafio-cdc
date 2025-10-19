@@ -22,7 +22,6 @@ public interface BookDoc {
     ResponseEntity<Pagination<BookPartialResponse>> findAllPartial(
         @RequestParam(value = "page") @DefaultValue("1") int page,
         @RequestParam(value = "size") @DefaultValue("10") int size,
-        @RequestParam("terms") String terms,
         @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
         @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction,
         @RequestBody List<Filter> filters

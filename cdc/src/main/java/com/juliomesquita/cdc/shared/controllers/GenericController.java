@@ -42,10 +42,10 @@ public abstract class GenericController<
     }
 
     @Override
-    @GetMapping
+    @PostMapping("/search")
     public ResponseEntity<Pagination<RESP>> findAll(
-        int currentPage, int itemsPerPage, String terms, String sort, String direction, List<Filter> filters) {
-        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction, filters);
+        int currentPage, int itemsPerPage, String sort, String direction, @RequestBody FilterRequest filter) {
+        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, sort, direction, filter.filters());
         return ResponseEntity.ok(service.findAll(searchQuery));
     }
 
