@@ -5,12 +5,14 @@ import com.juliomesquita.cdc.shared.entities.BaseEntityWithGeneratedId;
 import com.juliomesquita.cdc.shared.services.GenericMapperCr;
 import com.juliomesquita.cdc.shared.services.GenericMapperUp;
 import com.juliomesquita.cdc.shared.services.GenericService;
+import com.juliomesquita.cdc.shared.utils.Filter;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import com.juliomesquita.cdc.shared.utils.SearchQuery;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public abstract class GenericController<
@@ -40,10 +42,10 @@ public abstract class GenericController<
     }
 
     @Override
-    @GetMapping
+    @PostMapping("/search")
     public ResponseEntity<Pagination<RESP>> findAll(
-        int currentPage, int itemsPerPage, String terms, String sort, String direction) {
-        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, terms, sort, direction);
+        int currentPage, int itemsPerPage, String sort, String direction, @RequestBody FilterRequest filter) {
+        final SearchQuery searchQuery = new SearchQuery(currentPage, itemsPerPage, sort, direction, filter.filters());
         return ResponseEntity.ok(service.findAll(searchQuery));
     }
 

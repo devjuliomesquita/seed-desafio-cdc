@@ -1,9 +1,35 @@
 package com.juliomesquita.cdc.shared.repositories;
 
+import java.util.List;
+import java.util.stream.Stream;
+
 public enum SearchOperation {
-    CONTAINS, DOES_NOT_CONTAIN, EQUAL, NOT_EQUAL,
-    BEGINS_WITH, DOES_NOT_BEGIN_WITH, ENDS_WITH, DOES_NOT_END_WITH, NULL, NOT_NULL,
-    GREATER_THAN, GREATER_THAN_EQUAL, LESS_THAN, LESS_THAN_EQUAL, ANY, ALL;
+    CONTAINS("cn"),
+    DOES_NOT_CONTAIN("nc"),
+    EQUAL("eq"),
+    NOT_EQUAL("ne"),
+    BEGINS_WITH("bw"),
+    DOES_NOT_BEGIN_WITH("bn"),
+    ENDS_WITH("ew"),
+    DOES_NOT_END_WITH("en"),
+    NULL("nu"),
+    NOT_NULL("nn"),
+    GREATER_THAN("gt"),
+    GREATER_THAN_EQUAL("ge"),
+    LESS_THAN("lt"),
+    LESS_THAN_EQUAL("le"),
+    ANY("any"),
+    ALL("all");
+
+    private final String operation;
+
+    SearchOperation(String operation) {
+        this.operation = operation;
+    }
+
+    public String getOperation() {
+        return operation;
+    }
 
     public static final String[] SIMPLE_OPERATION_SET = {
         "cn", "nc", "eq", "ne", "bw", "bn", "ew", "en", "nu", "nn", "gt", "ge", "lt", "le"
@@ -18,22 +44,33 @@ public enum SearchOperation {
     }
 
     public static SearchOperation getSimpleOperation(final String input){
-        return switch (input){
-            case "cn" -> CONTAINS;
-            case "nc" -> DOES_NOT_CONTAIN;
-            case "eq" -> EQUAL;
-            case "ne" -> NOT_EQUAL;
-            case "bw" -> BEGINS_WITH;
-            case "bn" -> DOES_NOT_BEGIN_WITH;
-            case "ew" -> ENDS_WITH;
-            case "en" -> DOES_NOT_END_WITH;
-            case "nu" -> NULL;
-            case "nn" -> NOT_NULL;
-            case "gt" -> GREATER_THAN;
-            case "ge" -> GREATER_THAN_EQUAL;
-            case "lt" -> LESS_THAN;
-            case "le" -> LESS_THAN_EQUAL;
-            default -> null;
-        };
+        for (SearchOperation op : values()) {
+            if (op.getOperation().equalsIgnoreCase(input)) {
+                return op;
+            }
+        }
+        return null;
+    }
+
+    public static List<String> getStringOperations() {
+        return Stream.of(CONTAINS, DOES_NOT_CONTAIN, EQUAL, NOT_EQUAL, BEGINS_WITH, DOES_NOT_BEGIN_WITH, ENDS_WITH, DOES_NOT_END_WITH, NULL, NOT_NULL)
+            .map(SearchOperation::getOperation)
+            .toList();
+    }
+
+    public static List<String> getNumericOperations() {
+        return Stream.of(EQUAL, NOT_EQUAL, GREATER_THAN, GREATER_THAN_EQUAL, LESS_THAN, LESS_THAN_EQUAL, NULL, NOT_NULL)
+            .map(SearchOperation::getOperation)
+            .toList();
+    }
+
+    public static List<String> getDateOperations() {
+        return getNumericOperations();
+    }
+
+    public static List<String> getBooleanOperations() {
+        return Stream.of(EQUAL, NOT_EQUAL, NULL, NOT_NULL)
+            .map(SearchOperation::getOperation)
+            .toList();
     }
 }

@@ -1,5 +1,6 @@
 package com.juliomesquita.cdc.shared.controllers.doc;
 
+import com.juliomesquita.cdc.shared.controllers.FilterRequest;
 import com.juliomesquita.cdc.shared.utils.DefaultPublicAPIResponses;
 import com.juliomesquita.cdc.shared.utils.Pagination;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,16 +25,16 @@ public interface GenericDoc<CREQ, UREQ, RESP> {
     @DefaultPublicAPIResponses
     ResponseEntity<RESP> findById(@PathVariable UUID id);
 
-    @Operation(summary = "List all resources with pagination and search", operationId = "findAll", description = "This endpoint receives the necessary parameters for find an list of the resources.")
+        @Operation(summary = "List all resources with pagination and search", operationId = "findAll", description = "This endpoint finds a list of resources. For a list of available filter fields and relations, see the '/search-metadata' endpoint for this resource.")
     @ApiResponse(responseCode = "200", description = "Resources listed successfully")
     @DefaultPublicAPIResponses
     ResponseEntity<Pagination<RESP>> findAll(
         @RequestParam(value = "page") @DefaultValue("1") int page,
         @RequestParam(value = "size") @DefaultValue("10") int size,
-        @RequestParam(value = "terms", required = false) String terms,
         @RequestParam(value = "sort", required = false) @DefaultValue("id") String sort,
-        @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction
-    );
+        @RequestParam(value = "direction", required = false) @DefaultValue("asc") String direction,
+        @RequestBody FilterRequest filters
+        );
 
     @Operation(summary = "Update an existing resource by its ID", operationId = "update", description = "This endpoint receives the necessary parameters for updating a resource.")
     @ApiResponse(responseCode = "200", description = "Resource updated successfully")

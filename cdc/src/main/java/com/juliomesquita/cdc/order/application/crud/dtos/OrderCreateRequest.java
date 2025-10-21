@@ -9,10 +9,16 @@ import com.juliomesquita.cdc.order.domain.vo.UserInfoContact;
 import com.juliomesquita.cdc.order.domain.vo.UserInfos;
 import com.juliomesquita.cdc.order.domain.vo.UserInfosGeneral;
 import com.juliomesquita.cdc.shared.services.GenericMapperCr;
+import jakarta.validation.constraints.NotNull;
 
 public record OrderCreateRequest(
+    @NotNull(message = "{validation.not.null}")
     GeneralDto general,
+
+    @NotNull(message = "{validation.not.null}")
     AddressDto address,
+
+    @NotNull(message = "{validation.not.null}")
     ContactDto contact
 
 ) implements GenericMapperCr<Order> {
